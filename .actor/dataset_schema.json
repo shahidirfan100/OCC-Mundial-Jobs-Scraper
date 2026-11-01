@@ -1,0 +1,239 @@
+{
+    "actorSpecification": 1,
+    "fields": {
+        "type": "object",
+        "properties": {
+            "job_id": {
+                "title": "Job ID",
+                "type": "string",
+                "description": "OCC offer identifier."
+            },
+            "title": {
+                "title": "Job title",
+                "type": "string",
+                "description": "Published job title."
+            },
+            "company": {
+                "title": "Company",
+                "type": "string",
+                "description": "Hiring company, or Empresa confidencial when the employer is hidden."
+            },
+            "location": {
+                "title": "Location",
+                "type": "string",
+                "description": "City and state, or the state when no city is published."
+            },
+            "salary": {
+                "title": "Salary",
+                "type": "string",
+                "description": "Salary exactly as displayed by OCC."
+            },
+            "salary_min": {
+                "title": "Salary min",
+                "type": "number",
+                "description": "Lower bound of the monthly salary in MXN."
+            },
+            "salary_max": {
+                "title": "Salary max",
+                "type": "number",
+                "description": "Upper bound of the monthly salary in MXN."
+            },
+            "salary_currency": {
+                "title": "Salary currency",
+                "type": "string",
+                "description": "Salary currency, MXN for OCC listings."
+            },
+            "salary_period": {
+                "title": "Salary period",
+                "type": "string",
+                "description": "Pay period derived from the published salary text."
+            },
+            "employment_type": {
+                "title": "Employment type",
+                "type": "string",
+                "description": "Contract label such as Tiempo completo, Medio tiempo, Honorarios."
+            },
+            "work_schedule": {
+                "title": "Work schedule",
+                "type": "string",
+                "description": "Schedule label such as Jornada completa or Tiempo parcial."
+            },
+            "work_mode": {
+                "title": "Work mode",
+                "type": "string",
+                "description": "On-site, Hybrid, or Remote."
+            },
+            "category": {
+                "title": "Category",
+                "type": "string",
+                "description": "Top-level job category."
+            },
+            "subcategory": {
+                "title": "Subcategory",
+                "type": "string",
+                "description": "Detailed job subcategory."
+            },
+            "education": {
+                "title": "Education",
+                "type": "string",
+                "description": "Minimum education requested by the employer."
+            },
+            "date_posted": {
+                "title": "Date posted",
+                "type": "string",
+                "description": "Publication date in YYYY-MM-DD format."
+            },
+            "posted_text": {
+                "title": "Posted",
+                "type": "string",
+                "description": "Relative publication label shown by OCC."
+            },
+            "expires_at": {
+                "title": "Expires at",
+                "type": "string",
+                "description": "Expiration date in YYYY-MM-DD format."
+            },
+            "benefits": {
+                "title": "Benefits",
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "description": "Benefits published by the employer."
+            },
+            "keywords": {
+                "title": "Keywords",
+                "type": "string",
+                "description": "Keywords attached to the offer by OCC."
+            },
+            "description": {
+                "title": "Description",
+                "type": "string",
+                "description": "Full job description as plain text."
+            },
+            "description_html": {
+                "title": "Description HTML",
+                "type": "string",
+                "description": "Full job description as published HTML."
+            },
+            "company_url": {
+                "title": "Company URL",
+                "type": "string",
+                "description": "Company board URL on OCC."
+            },
+            "company_logo": {
+                "title": "Company logo",
+                "type": "string",
+                "description": "Company logo URL."
+            },
+            "is_verified_company": {
+                "title": "Verified company",
+                "type": "boolean",
+                "description": "Whether OCC marks the company as verified."
+            },
+            "url": {
+                "title": "URL",
+                "type": "string",
+                "description": "Public job detail URL."
+            },
+            "source": {
+                "title": "Source",
+                "type": "string",
+                "description": "Always occ.com.mx."
+            },
+            "scraped_at": {
+                "title": "Scraped at",
+                "type": "string",
+                "description": "ISO timestamp of the extraction."
+            }
+        }
+    },
+    "views": {
+        "overview": {
+            "title": "Overview",
+            "transformation": {
+                "fields": [
+                    "title",
+                    "company",
+                    "location",
+                    "salary",
+                    "work_mode",
+                    "employment_type",
+                    "date_posted",
+                    "url"
+                ],
+                "skipEmpty": true
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "title": {
+                        "label": "Job title",
+                        "format": "text"
+                    },
+                    "company": {
+                        "label": "Company",
+                        "format": "text"
+                    },
+                    "location": {
+                        "label": "Location",
+                        "format": "text"
+                    },
+                    "salary": {
+                        "label": "Salary",
+                        "format": "text"
+                    },
+                    "work_mode": {
+                        "label": "Work mode",
+                        "format": "text"
+                    },
+                    "employment_type": {
+                        "label": "Employment type",
+                        "format": "text"
+                    },
+                    "date_posted": {
+                        "label": "Posted",
+                        "format": "text"
+                    },
+                    "url": {
+                        "label": "URL",
+                        "format": "link"
+                    }
+                }
+            }
+        },
+        "descriptions": {
+            "title": "Descriptions",
+            "transformation": {
+                "fields": [
+                    "title",
+                    "company",
+                    "description",
+                    "url"
+                ],
+                "skipEmpty": true
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "title": {
+                        "label": "Job title",
+                        "format": "text"
+                    },
+                    "company": {
+                        "label": "Company",
+                        "format": "text"
+                    },
+                    "description": {
+                        "label": "Description",
+                        "format": "text"
+                    },
+                    "url": {
+                        "label": "URL",
+                        "format": "link"
+                    }
+                }
+            }
+        }
+    }
+}

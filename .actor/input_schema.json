@@ -1,0 +1,60 @@
+{
+    "title": "OCC Mundial Jobs Scraper",
+    "description": "Collect job listings and full job details from OCC Mundial (occ.com.mx). Paste an OCC search URL, or use a keyword and location.",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "url": {
+            "title": "Start URL",
+            "type": "string",
+            "description": "An OCC job search, category, company board, or job detail URL. A custom URL takes priority over keyword and location. Example: https://www.occ.com.mx/empleos/de-contador/en-ciudad-de-mexico/",
+            "editor": "textfield",
+            "default": "https://www.occ.com.mx/empleos/",
+            "prefill": "https://www.occ.com.mx/empleos/"
+        },
+        "keyword": {
+            "title": "Keyword",
+            "type": "string",
+            "description": "Job title, skill, or search term. Used when the Start URL is left at the default general board.",
+            "editor": "textfield"
+        },
+        "location": {
+            "title": "Location",
+            "type": "string",
+            "description": "Mexican state, city, or neighborhood. Used when the Start URL is left at the default general board. Leave empty for all of Mexico.",
+            "editor": "textfield"
+        },
+        "results_wanted": {
+            "title": "Maximum results",
+            "type": "integer",
+            "description": "Maximum number of jobs to save to the dataset.",
+            "minimum": 1,
+            "maximum": 5000,
+            "default": 20,
+            "editor": "number"
+        },
+        "max_pages": {
+            "title": "Maximum pages",
+            "type": "integer",
+            "description": "Safety cap on the number of search result pages to visit. Each page holds about 20 jobs.",
+            "minimum": 1,
+            "maximum": 500,
+            "default": 5,
+            "editor": "number"
+        },
+        "proxyConfiguration": {
+            "title": "Proxy configuration",
+            "type": "object",
+            "description": "OCC protects its search pages with a Cloudflare challenge. Apify Residential proxy is recommended.",
+            "editor": "proxy",
+            "default": {
+                "useApifyProxy": true,
+                "apifyProxyGroups": [
+                    "RESIDENTIAL"
+                ]
+            }
+        }
+    },
+    "required": [],
+    "additionalProperties": false
+}
