@@ -72,13 +72,15 @@ window.swipeOffersData = [{ "OfferId": "21392757", ... }, ...];
 We parse that JSON assignment (not DOM selectors) and fall back to the page's
 JSON-LD `ItemList` when it is missing. No card HTML parsing is used.
 
-Access strategy: plain HTTP through an Apify Residential proxy first.
-If Cloudflare still blocks the listing, the actor switches to Patchright Chrome
-on a fresh residential session and reads the same `window.swipeOffersData` JSON
-from the browser context. If that variable is missing on a loaded page, it falls
-back to the page's JSON-LD `ItemList` and offer URLs. The browser is only a
-transport for the site's own JSON and for the JSON detail API, which it calls
-with the page's native `fetch`; it never parses card HTML.
+Access strategy: Patchright Chrome on an Apify Residential session is the
+primary transport. It loads the listing page, reads `window.swipeOffersData`,
+and falls back to the page's JSON-LD `ItemList` and offer URLs when that
+variable is missing. Detail records are fetched with the page's native `fetch`.
+The browser never parses card HTML.
+
+Plain HTTP through got-scraping remains as a fallback if Chrome cannot start or
+cannot load the listing after session retries. The HTTP path uses the same
+structured listing data and JSON detail API.
 
 ### 3. Location resolver (keyword + location input)
 
@@ -123,7 +125,9 @@ when the resolver is unavailable.
 - Listing JSON: `window.swipeOffersData` parsed cleanly with 20 offer IDs.
 - Keyword, keyword+state, keyword+city, category, and company-board URLs all
   return `window.swipeOffersData` or a JSON-LD `ItemList`.
-- Patchright Chrome fallback verified with the default residential pool, a US
-  residential session, a BR residential session, and an MX session.
-- The default residential proxy has no country pinned; HTTP runs with the
-  default pool, US, and BR all returned jobs.
+- Patchright Chrome primary path verified with the default residential pool, a
+  US residential session, a BR residential session, and an MX session.
+- A single browser-first run collected 200 jobs across 10 pages in about 25
+  seconds, with no HTTP challenge step and no session retry.
+- The default residential proxy has no country pinned; runs with the default
+  pool, US, and BR all returned jobs.

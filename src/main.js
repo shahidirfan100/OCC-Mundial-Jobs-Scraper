@@ -514,7 +514,13 @@ async function run() {
     );
     const directAccess = new HttpAccess(undefined);
 
-    let access = new HttpAccess(await newProxyUrl());
+    let access;
+    try {
+        access = await createBrowserWithRetry(newProxyUrl);
+    } catch (error) {
+        log.warning('Chrome could not start, using HTTP.', { error: error.message });
+        access = new HttpAccess(await newProxyUrl());
+    }
     let base;
     let directDetailFailed = false;
 
@@ -551,27 +557,7 @@ async function run() {
 
         let firstPage = await access.getListing(withPage(base.url, getPageFromUrl(base.url)));
 
-        for (let attempt = 0; firstPage.blocked && firstPage.proxyFailure && attempt < 2; attempt++) {
-            log.warning('Proxy request failed, retrying with a new session.', {
-                attempt: attempt + 1,
-                error: firstPage.error,
-            });
-            await access.close();
-            access = new HttpAccess(await newProxyUrl());
-            firstPage = await access.getListing(withPage(base.url, getPageFromUrl(base.url)));
-        }
-
-        if (firstPage.blocked && access.name === 'http') {
-            log.warning('HTTP listing blocked by the target, switching to Chrome.', {
-                statusCode: firstPage.statusCode,
-                error: firstPage.error,
-            });
-            await access.close();
-
-            access = await createBrowserWithRetry(newProxyUrl);
-            base = await buildBaseUrl(access, { inputUrl: effectiveUrl, keyword, location });
-            firstPage = await access.getListing(withPage(base.url, getPageFromUrl(base.url)));
-
+        if (access.name === 'browser') {
             for (let attempt = 0; firstPage.blocked && attempt < 2; attempt++) {
                 log.warning('Chrome could not load the listing, retrying with a new session.', {
                     attempt: attempt + 1,
@@ -581,6 +567,26 @@ async function run() {
                 access = await createBrowserWithRetry(newProxyUrl);
                 firstPage = await access.getListing(withPage(base.url, getPageFromUrl(base.url)));
             }
+
+            if (firstPage.blocked) {
+                log.warning('Chrome could not load the listing, switching to HTTP.', {
+                    statusCode: firstPage.statusCode,
+                    error: firstPage.error,
+                });
+                await access.close();
+                access = new HttpAccess(await newProxyUrl());
+                firstPage = await access.getListing(withPage(base.url, getPageFromUrl(base.url)));
+            }
+        }
+
+        for (let attempt = 0; firstPage.blocked && access.name === 'http' && firstPage.proxyFailure && attempt < 2; attempt++) {
+            log.warning('Proxy request failed, retrying with a new session.', {
+                attempt: attempt + 1,
+                error: firstPage.error,
+            });
+            await access.close();
+            access = new HttpAccess(await newProxyUrl());
+            firstPage = await access.getListing(withPage(base.url, getPageFromUrl(base.url)));
         }
 
         if (firstPage.blocked) {
